@@ -11,23 +11,19 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/city/{city_id}/neighborhood', [CityController::class, 'neighborhood']);
-Route::get('/city/{city_id}/neighborhood/{neighborhood_id}/street', [CityController::class, 'street']);
-
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/teste', function () {
         return 'Teste';
     });
-    
+
     Route::resource('/city', CityController::class);
     Route::resource('/neighborhood', NeighborhoodController::class);
     Route::resource('/street', StreetController::class);
-
-
-    // Route::resource('/city/{city_id}/neighborhood', NeighborhoodController::class);
-    // Route::resource('/city/{city_id}/neighborhood/{neighborhood_id}/street', StreetController::class);
-
+    
+    // Route::get('/city/{city_id}/neighborhood', [NeighborhoodController::class, 'neighborhood']);
+    // Route::get('/neighborhood/{neighborhood_id}/street', [StreetController::class, 'neighborhood']);
+    // Route::get('/city/{city_id}/neighborhood/{neighborhood_id}/street', [StreetController::class, 'street']);
 });
 
 

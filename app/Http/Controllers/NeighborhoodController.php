@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NeighborhoodRequest;
 use App\Models\City;
 use App\Models\Neighborhood;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class NeighborhoodController extends Controller
      */
     public function index()
     {
-        $neighborhood = Neighborhood::all();
+        $neighborhood = City::with('neighborhood')->get();
 
         if($neighborhood === null){
             return response()->json(['message'=> 'Nenhum bairro encontrado!'], 404);
@@ -27,7 +28,9 @@ class NeighborhoodController extends Controller
      */
     public function create()
     {
-        //
+        $cities = City::select('id', 'name')->get();
+
+        return response()->json($cities,200);
     }
 
     /**
@@ -57,15 +60,28 @@ class NeighborhoodController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $neighborhood_id)
     {
-        //
+        $neighborhood = Neighborhood::find($neighborhood_id);
+
+        if($neighborhood === null){
+            return response()->json(['message'=> 'Bairro não encontrado!'], 404);
+        }
+
+        $city_id = $neighborhood->city_id;
+
+        $city = City::find($city_id);
+
+        $neighborhoodArray = $neighborhood->toArray();
+        $neighborhoodArray['cityName'] = $city->name;
+
+        return response()->json($neighborhoodArray, 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Neighborhood $neighborhood)
+    public function update(NeighborhoodRequest $request, Neighborhood $neighborhood)
     {
         if($neighborhood === null){
             return response()->json(['message'=> 'Bairro não encontrado!'], 404);
@@ -81,11 +97,11 @@ class NeighborhoodController extends Controller
      */
     public function destroy(string $neighborhood_id)
     {
-        // $neighborhood = Neighborhood::whereId($neighborhood_id)->firts();
+        $neighborhood = Neighborhood::whereId($neighborhood_id)->first();
 
-        // if($neighborhood === null){
-        //     return response()->json(['message'=> ' Bairro não encontrado!'], 404);
-        // }
+        if($neighborhood === null){
+            return response()->json(['message'=> ' Bairro não encontrado!'], 404);
+        }
         
         Neighborhood::destroy($neighborhood_id);
         return response()->noContent();

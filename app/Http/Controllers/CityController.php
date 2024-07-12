@@ -9,28 +9,6 @@ use Illuminate\Http\Request;
 
 class CityController extends Controller
 {
-
-    public function neighborhood(string $city_id)
-    {
-        $city = City::with('neighborhood')->find($city_id);
-
-        if($city === null){
-            return response()->json(['message'=> 'Cidade não encontrada!'], 404);
-        }
-
-        return response()->json($city, 200);
-    }
-
-    public function street(string $city_id, string $neighborhood_id)
-    {
-        $city = Neighborhood::with('street')->find($neighborhood_id);
-
-        if($city === null){
-            return response()->json(['message'=> 'Cidade não encontrada!'], 404);
-        }
-
-        return response()->json($city, 200);
-    }
     /**
      * Display a listing of the resource.
      */
@@ -54,7 +32,7 @@ class CityController extends Controller
      */
     public function show(string $city_id)
     {
-        $city = City::with('neighborhood')->find($city_id);
+        $city = City::find($city_id);
 
         if($city === null){
             return response()->json(['message'=> 'Cidade não encontrada!'], 404);
@@ -76,7 +54,7 @@ class CityController extends Controller
 
         return response()->json($city, 200);
     }
-
+    
     /**
      * Update the specified resource in storage.
      */
@@ -97,11 +75,11 @@ class CityController extends Controller
      */
     public function destroy(string $city_id)
     {
-        // $city = City::whereId($city_id)->firts();
+        $city = City::whereId($city_id)->first();
 
-        // if($city === null){
-        //     return response()->json(['message'=> 'Cidade não encontrada!'], 404);
-        // }
+        if($city === null){
+            return response()->json(['message'=> 'Cidade não encontrada!'], 404);
+        }
         
         City::destroy($city_id);
         return response()->noContent();
